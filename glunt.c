@@ -7,8 +7,10 @@
 #error >>> Incompatible versions of glunt.c and glunt.h
 #endif
 
+#define __glunt_t_bits_Const (sizeof(glunt_t) * CHAR_BIT)
+
 typedef glunt_t __word_Type;
-#define __word_bits_Const (sizeof(glunt_t) * CHAR_BIT)
+#define __word_bits_Const __glunt_t_bits_Const
 #include "lowlevel.h"
 
 /* There is no overlapping if:
@@ -488,10 +490,10 @@ glunt_t glunt_shl(glunt_ptr dp, glunt_srcptr xp, glize_t n, unsigned long bit_cn
 {
 	__assert__ (n);
 	__assert__ (bit_cnt > 0U);
-	__assert__ (bit_cnt < glunt_t_bits);
+	__assert__ (bit_cnt < __glunt_t_bits_Const);
 	__assert__ (dp >= xp || __no_overlapping_p__ (xp, n, dp, n));
 
-	const unsigned long shr = glunt_t_bits - bit_cnt;
+	const unsigned long shr = __glunt_t_bits_Const - bit_cnt;
 	glunt_srcptr const xp_0 = xp;
 	xp += n - 1; /* most significant digits */
 	dp += n - 1;
@@ -516,10 +518,10 @@ glunt_t glunt_shr(glunt_ptr dp, glunt_srcptr xp, glize_t n, unsigned long bit_cn
 {
 	__assert__ (n);
 	__assert__ (bit_cnt > 0U);
-	__assert__ (bit_cnt < glunt_t_bits);
+	__assert__ (bit_cnt < __glunt_t_bits_Const);
 	__assert__ (dp <= xp || __no_overlapping_p__ (xp, n, dp, n));
 
-	const unsigned long shl = glunt_t_bits - bit_cnt;
+	const unsigned long shl = __glunt_t_bits_Const - bit_cnt;
 	glunt_srcptr const xp_msd = xp + n - 1;
 
 	glunt_t hw = *xp++;
@@ -626,8 +628,8 @@ int glunt_setbit(glunt_ptr xp, glize_t n, unsigned long bit_pos)
 	__assert__ (n);
 
  	int ret = 0;
-	const glize_t words = bit_pos / glunt_t_bits;
-	bit_pos = bit_pos % glunt_t_bits;
+	const glize_t words = bit_pos / __glunt_t_bits_Const;
+	bit_pos = bit_pos % __glunt_t_bits_Const;
 	const glunt_t mask = (glunt_t) 1 << bit_pos;
 
 	if(words >= n)
@@ -648,8 +650,8 @@ int glunt_toggle(glunt_ptr xp, glize_t n, unsigned long bit_pos)
 	__assert__ (n);
 
 	int ret = 0;
-	const glize_t words = bit_pos / glunt_t_bits;
-	bit_pos = bit_pos % glunt_t_bits;
+	const glize_t words = bit_pos / __glunt_t_bits_Const;
+	bit_pos = bit_pos % __glunt_t_bits_Const;
 	const glunt_t mask = (glunt_t) 1 << bit_pos;
 
 	if(words >= n)
@@ -670,8 +672,8 @@ int glunt_testbit(glunt_srcptr xp, glize_t n, unsigned long bit_pos)
 	__assert__ (n);
 
 	int ret = 0;
-	const glize_t words = bit_pos / glunt_t_bits;
-	bit_pos = bit_pos % glunt_t_bits;
+	const glize_t words = bit_pos / __glunt_t_bits_Const;
+	bit_pos = bit_pos % __glunt_t_bits_Const;
 	const glunt_t mask = (glunt_t) 1 << bit_pos;
 
 	if(words < n){
@@ -689,8 +691,8 @@ int glunt_clearbit(glunt_ptr xp, glize_t n, unsigned long bit_pos)
 	__assert__ (n);
 
 	int ret = 0;
-	const glize_t words = bit_pos / glunt_t_bits;
-	bit_pos = bit_pos % glunt_t_bits;
+	const glize_t words = bit_pos / __glunt_t_bits_Const;
+	bit_pos = bit_pos % __glunt_t_bits_Const;
 	const glunt_t mask = (glunt_t) 1 << bit_pos;
 
 	if(words < n){
@@ -711,14 +713,14 @@ unsigned long glunt_bitsize(glunt_srcptr xp, glize_t n)
 
 	__clz__ (clz, xp[--n]);
 
-	n += glunt_t_bits - clz;
+	n += __glunt_t_bits_Const - clz;
 
 	return n + (n == 0U);
 }
 
 glize_t glunt_size(unsigned long bit_cnt)
 {
-	return bit_cnt / glunt_t_bits + (0UL < (bit_cnt % glunt_t_bits));
+	return bit_cnt / __glunt_t_bits_Const + (0UL < (bit_cnt % __glunt_t_bits_Const));
 }
 
 int glunt_cmp_1(glunt_srcptr xp, glize_t n, glunt_t y)
@@ -880,7 +882,7 @@ void mpn_clear(mpn_ptr wp)
 void mpn_set_ull(mpn_ptr wp, unsigned long long x)
 {
 	wp->_u[0] = (glunt_t) x;
-	wp->_u[1] = x = (glunt_t) (x >> glunt_t_bits);
+	wp->_u[1] = x = (glunt_t) (x >> __glunt_t_bits_Const);
 
 	if(x){
 		wp->_size = 2;
