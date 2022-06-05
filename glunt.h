@@ -7,9 +7,12 @@
 extern "C" {
 #endif
 
-#define GLUNT_MAJOR  1
-#define GLUNT_MINOR  0
-#define GLUNT_VERSION  ((GLUNT_MAJOR << 8) + GLUNT_MINOR)
+#define GLUNT_H_MAJ  1
+#define GLUNT_H_MIN  0
+
+#define GLUNT_MAJ GLUNT_H_MAJ
+#define GLUNT_MIN GLUNT_H_MIN
+#define GLUNT_VER ((GLUNT_H_MAJ << 8) + GLUNT_H_MIN)
 
 typedef unsigned long glunt_t;
 typedef unsigned long glize_t; /* size type */
@@ -38,10 +41,10 @@ void glunt_mul(glunt_ptr, glunt_srcptr, glize_t, glunt_srcptr, glize_t);
 void glunt_mul_n(glunt_ptr, glunt_srcptr, glunt_srcptr, glize_t);
 void glunt_sqr(glunt_ptr, glunt_srcptr, glize_t);
 
-glunt_t glunt_divqr_1(glunt_ptr, glunt_srcptr, glize_t, glunt_t);	
+glunt_t glunt_divqr_1(glunt_ptr, glunt_srcptr, glize_t, glunt_t);
 void glunt_divqr(glunt_ptr, glunt_ptr, glize_t, glunt_srcptr, glize_t);
 
-glunt_t glunt_divr_1(glunt_srcptr, glize_t, glunt_t);	
+glunt_t glunt_divr_1(glunt_srcptr, glize_t, glunt_t);
 void glunt_divr(glunt_ptr, glize_t, glunt_srcptr, glize_t);
 
 void glunt_addr(glunt_ptr, glunt_srcptr, glize_t, glunt_srcptr, glize_t, glunt_srcptr, glize_t);
